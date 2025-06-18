@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome - Dr. Sooppy's Clinic</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+
+  <h1>Welcome to Dr. Sooppy's Booking</h1>
+  <h2>Clinic Working Hours</h2>
+
+
+  <div class="tables-container">
+    <!-- Koothali Table -->
+    <table>
+       
+       
+      <caption>Koothali</caption>
+      <tr><th>Day</th><th>Time</th></tr>
+      <tr><td>Sunday</td><td>08:00 AM – 09:30 AM</td></tr>
+      <tr><td>Monday</td><td>09:45 AM – 01:00 PM</td></tr>
+      <tr><td>Tuesday</td><td>❌ Not Working</td></tr>
+      <tr><td>Wednesday</td><td>09:45 AM – 01:00 PM</td></tr>
+      <tr><td>Thursday</td><td>09:45 AM – 01:00 PM</td></tr>
+      <tr><td>Friday</td><td>09:45 AM – 01:00 PM</td></tr>
+      <tr><td>Saturday</td><td>09:45 AM – 01:00 PM</td></tr>
+    </table>
+
+    <!-- Koorachundu Table -->
+    <table>
+     
+      <caption>Koorachundu</caption>
+      <tr><th>Day</th><th>Time</th></tr>
+      <tr><td>Sunday</td><td>11:00 AM – 01:00 PM</td></tr>
+      <tr><td>Monday</td><td>04:45 PM – 07:00 PM</td></tr>
+      <tr><td>Tuesday</td><td>❌ Not Working</td></tr>
+      <tr><td>Wednesday</td><td>04:45 PM – 07:00 PM</td></tr>
+      <tr><td>Thursday</td><td>04:45 PM – 07:00 PM</td></tr>
+      <tr><td>Friday</td><td>04:45 PM – 07:00 PM</td></tr>
+      <tr><td>Saturday</td><td>04:45 PM – 07:00 PM</td></tr>
+    </table>
+  </div>
+
+  <h2>Take Appointment For</h2>
+  <p style="text-align:center; font-size:1.1rem; color:#555; margin-bottom:10px;">
+    Please select your clinic location below to book an appointment.
+  </p>
+  <div class="button-container">
+    <a href="/koothali" class="button">Koothali Clinic</a>
+    <a href="/koorachundu" class="button">Koorachundu Clinic</a>
+  </div>
+
+</body>
+</html>

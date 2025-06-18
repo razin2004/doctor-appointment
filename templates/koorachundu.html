@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page Title Here</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h2>Book Your Appointment - Koorachundu</h2>
+    <form method="POST" class="appointment-form">
+      <label>Name:</label>
+      <input type="text" name="name" required>
+
+      <label>Age:</label>
+      <input type="number" name="age" min="0" required>
+
+      <label>Date:</label>
+      <input type="date" name="date" required>
+
+      <button type="submit">Confirm Appointment</button>
+    </form>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.querySelector('input[name="date"]');
+
+    // 🔒 Disable past dates
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+
+    // ❌ Block Tuesdays
+    dateInput.addEventListener('input', function () {
+      const selectedDate = new Date(this.value);
+      const day = selectedDate.getUTCDay(); // 0=Sun, ..., 6=Sat
+      if (day === 2) {
+        alert("Appointments are not available on Tuesdays. Please choose another date.");
+        this.value = '';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
