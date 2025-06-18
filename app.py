@@ -1,16 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for
 import gspread
-import json
-import os
-from google.oauth2.service_account import Credentials
+from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
 app = Flask(__name__)
 
-# ✅ Setup Google Sheets via environment variable (for Render)
-scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-service_account_info = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT"])
-creds = Credentials.from_service_account_info(service_account_info, scopes=scope)
+# Setup Google Sheets
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
 
 # Open sheets by name
@@ -49,6 +46,7 @@ def koorachundu():
         sheet.append_row(row)
 
         token = len(sheet.get_all_values())
+
         return render_template('confirmation.html', name=name, date=date, token=token, place="Koorachundu")
 
     return render_template('koorachundu.html')
