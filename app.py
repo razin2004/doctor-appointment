@@ -58,4 +58,6 @@ def get_or_create_sheet(spreadsheet, date):
         return spreadsheet.add_worksheet(title=date, rows="100", cols="3")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))  # use 5000 locally if PORT is not set
+    app.run(host='0.0.0.0', port=port)
