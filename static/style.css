@@ -193,8 +193,10 @@ button[type="submit"]:hover {
 }
 @media (max-width: 600px) {
   body {
-    background-size: cover; /* or '100% 100%' if needed */
-    background-attachment: scroll; /* prevent mobile bugs */
+    background-size: cover;
+    background-attachment: fixed; /* was 'scroll' — change to 'fixed' */
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   .container, .appointment-form {
