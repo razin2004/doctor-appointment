@@ -8,7 +8,43 @@ body {
   background-position: center;
   background-attachment: fixed;
 }
-h1, h2 {
+h1{
+  text-align: center;
+  color: #2c3e50;
+}
+
+  
+.info-box {
+  background-color: #28a745; /* Green background */
+  color: white;
+  text-align: center;
+  padding: 10px 5px;
+  border-radius: 8px 8px 8px 8px;
+  margin-bottom: 0;
+}
+
+.info-box h1 {
+  margin: 0;
+  font-size: 2.0rem;
+}
+
+.info-box p {
+  margin: 5px 0 0;
+  font-size: 1rem;
+}
+
+.divider {
+  border: none;
+  border-top: 4px solid #218838; /* dark green line */
+  margin: 0;
+  width: 100%;
+}
+
+
+
+
+h2 {
+  padding: -20px;
   text-align: center;
   color: #2c3e50;
 }
@@ -17,7 +53,7 @@ h1, h2 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 40px;
-  margin: 40px 0;
+  margin: 20px;
 }
 table {
   border-collapse: collapse;
@@ -48,7 +84,7 @@ caption {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 20px;
+  margin-top: -20px;
 }
 .button {
  
@@ -64,10 +100,14 @@ caption {
 
 
 }
+.tables{
+margin-top: 30px;
+
+}
 .container {
   max-width: 500px;
   margin: 40px auto;
-  padding: 30px;
+  padding: 40px;
   background-color: #ffffff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -149,7 +189,9 @@ button[type="submit"]:hover {
 }
 @media (max-width: 600px) {
   body {
-    margin: 10px;
+     background-size: contain;
+    background-position: top center;
+    background-repeat: no-repeat;
   }
 
   .container, .appointment-form {

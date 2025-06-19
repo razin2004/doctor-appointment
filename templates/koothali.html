@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Page Title Here</title>
+  <title>Dr.Sooppy's Booking</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -11,37 +12,77 @@
     <h2>Book Your Appointment - koothali</h2>
     <form method="POST" class="appointment-form">
       <label>Name:</label>
-      <input type="text" name="name" required>
+<input type="text" name="name" id="name" required onkeypress="return /^[a-zA-Z\s]$/.test(String.fromCharCode(event.which))">
 
       <label>Age:</label>
-      <input type="number" name="age" min="0" required>
+<input type="number" name="age" min="0" max="110" maxlength="3" required>
 
       <label>Date:</label>
       <input type="date" name="date" required>
+<p id="tokenDisplay"></p>
+
+{% if message %}
+  <p style="color: red;">{{ message }}</p>
+  
+{% endif %}
 
       <button type="submit">Confirm Appointment</button>
     </form>
   </div>
     
-  <script>
+ <script>
   document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.querySelector('input[name="date"]');
+    const tokenDisplay = document.getElementById("tokenDisplay");
 
-    // 🔒 Disable past dates
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.min = today;
+    // Function to format date as yyyy-mm-dd
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    }
 
-    // ❌ Block Tuesdays
-    dateInput.addEventListener('input', function () {
-      const selectedDate = new Date(this.value);
-      const day = selectedDate.getUTCDay(); // 0=Sun, ..., 6=Sat
-      if (day === 2) {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    // Allow only today and tomorrow
+    dateInput.min = formatDate(today);
+    dateInput.max = formatDate(tomorrow);
+
+    // 👉 Token fetch and validation on date change
+    dateInput.addEventListener('change', function () {
+      const selectedDate = this.value;
+      const selectedDay = new Date(selectedDate).getDay();
+
+      if (selectedDay === 2) {
         alert("Appointments are not available on Tuesdays. Please choose another date.");
         this.value = '';
+        tokenDisplay.textContent = '';
+        return;
       }
+
+      fetch('/get_token_count_koothali', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ date: selectedDate })
+      })
+      .then(response => response.json())
+      .then(data => {
+if (data.count >= 25) {
+  tokenDisplay.textContent = "Your Token Number will be: " + (data.count + 1);
+} else {
+  tokenDisplay.textContent = "";
+}
+      });
     });
   });
 </script>
+
+
 
 </body>
 </html>

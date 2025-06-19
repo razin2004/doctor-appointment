@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
+
 app = Flask(__name__)
 
 # Setup Google Sheets
@@ -13,6 +14,7 @@ client = gspread.authorize(creds)
 # Open sheets by name
 koothali_sheet = client.open("Koothali_Appointments")
 koorachundu_sheet = client.open("Koorachundu_Appointments")
+
 
 @app.route('/')
 def index():
@@ -25,6 +27,13 @@ def koothali():
         age = request.form['age']
         date = request.form['date']
 
+        # Check if the selected date is today
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().time()
+
+        if date == current_date and current_time.hour >= 13:  # 1:00 PM or later
+            return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
+
         sheet = get_or_create_sheet(koothali_sheet, date)
         row = [name, age, date]
         sheet.append_row(row)
@@ -34,6 +43,7 @@ def koothali():
 
     return render_template('koothali.html')
 
+
 @app.route('/koorachundu', methods=['GET', 'POST'])
 def koorachundu():
     if request.method == 'POST':
@@ -41,13 +51,19 @@ def koorachundu():
         age = request.form['age']
         date = request.form['date']
 
+        # Check if the selected date is today
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().time()
+
+        if date == current_date and current_time.hour >= 20 :  # 7:00 PM or later
+            return render_template('koorachundu.html', message="Today's booking is closed as the clinic timing is over.")
+
         sheet = get_or_create_sheet(koorachundu_sheet, date)
         row = [name, age, date]
         sheet.append_row(row)
 
         token = len(sheet.get_all_values())
-
-        return render_template('confirmation.html', name=name, date=date, token=token, place="Koorachundu")
+        return render_template('confirmation.html', name=name, date=date, token=token, place="koorachundu")
 
     return render_template('koorachundu.html')
 
@@ -56,6 +72,34 @@ def get_or_create_sheet(spreadsheet, date):
         return spreadsheet.worksheet(date)
     except gspread.exceptions.WorksheetNotFound:
         return spreadsheet.add_worksheet(title=date, rows="100", cols="3")
+
+@app.route('/get_token_count_koothali', methods=['POST'])
+def get_token_count_koothali():
+    from flask import jsonify
+    date = request.json.get('date')
+    if not date:
+        return jsonify({'count': 0})
+
+    try:
+        sheet = get_or_create_sheet(koothali_sheet, date)
+        count = len(sheet.get_all_values())
+        return jsonify({'count': count})
+    except Exception as e:
+        return jsonify({'count': 0})
+
+@app.route('/get_token_count_koorachundu', methods=['POST'])
+def get_token_count_koorachundu():
+    from flask import jsonify
+    date = request.json.get('date')
+    if not date:
+        return jsonify({'count': 0})
+
+    try:
+        sheet = get_or_create_sheet(koorachundu_sheet, date)
+        count = len(sheet.get_all_values())
+        return jsonify({'count': count})
+    except Exception as e:
+        return jsonify({'count': 0})
 
 if __name__ == '__main__':
     import os

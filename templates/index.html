@@ -1,17 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome - Dr. Sooppy's Clinic</title>
+  <title>Dr.Sooppy's Booking</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
 <body>
+<div class="info-box">
+  <h1>Dr. Sooppy's Clinic</h1>
+  <p><strong>📞 For Enquiry & Booking:</strong> <a href="tel:8589821725" class="phone-link">85898 21725</a></p>
+  <p>
+    📍<a href="https://www.google.com/maps/place/7J3QHQP8%2BX7R/@11.5874875,75.7630657,17z/data=!3m1!4b1!4m4!3m3!8m2!3d11.5874875!4d75.7656406?entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">Koothali</a> 
+    📍<a href="https://www.google.com/maps/place/7J3QGRQW%2B96J/@11.5384625,75.8429407,17z/data=!3m1!4b1!4m4!3m3!8m2!3d11.5384625!4d75.8455156?entry=ttu&g_ep=EgoyMDI1MDYxNi4wIKXMDSoASAFQAw%3D%3D" target="_blank">Koorachundu</a>
+  </p>
+</div>
 
-  <h1>Welcome to Dr. Sooppy's Booking</h1>
-  <h2>Clinic Working Hours</h2>
+
+
+
+
+
+
+  <div class="tables"></div>
+ 
 
 
   <div class="tables-container">
@@ -19,7 +35,7 @@
     <table>
        
        
-      <caption>Koothali</caption>
+      <caption>Koothali Working Hours</caption>
       <tr><th>Day</th><th>Time</th></tr>
       <tr><td>Sunday</td><td>08:00 AM – 09:30 AM</td></tr>
       <tr><td>Monday</td><td>09:45 AM – 01:00 PM</td></tr>
@@ -33,7 +49,7 @@
     <!-- Koorachundu Table -->
     <table>
      
-      <caption>Koorachundu</caption>
+      <caption>Koorachundu Working Hours</caption>
       <tr><th>Day</th><th>Time</th></tr>
       <tr><td>Sunday</td><td>11:00 AM – 01:00 PM</td></tr>
       <tr><td>Monday</td><td>04:45 PM – 07:00 PM</td></tr>
@@ -45,7 +61,7 @@
     </table>
   </div>
 
-  <h2>Take Appointment For</h2>
+  <h2>Take Appointment</h2>
   <p style="text-align:center; font-size:1.1rem; color:#555; margin-bottom:10px;">
     Please select your clinic location below to book an appointment.
   </p>
@@ -53,6 +69,6 @@
     <a href="/koothali" class="button">Koothali Clinic</a>
     <a href="/koorachundu" class="button">Koorachundu Clinic</a>
   </div>
-
+</div>
 </body>
 </html>
