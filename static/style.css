@@ -217,7 +217,6 @@ button[type="submit"]:hover {
     flex-direction: column;
     align-items: center;
     gap: 5px;
-     margin-bottom: 30px;
   }
 
   .tables-container {
@@ -234,6 +233,9 @@ button[type="submit"]:hover {
     width: 90%;
     text-align: center;
   }
+  .koorachundu-button {
+  margin-bottom: 30px; /* Adds space below the button on mobile */
+}
 }
 body::before {
   content: "";
