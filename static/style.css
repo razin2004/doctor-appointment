@@ -234,7 +234,7 @@ button[type="submit"]:hover {
     text-align: center;
   }
   .koorachundu-button {
-  margin-bottom: 30px; /* Adds space below the button on mobile */
+  margin-bottom: 40px; /* Adds space below the button on mobile */
 }
 }
 body::before {

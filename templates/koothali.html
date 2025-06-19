@@ -47,15 +47,19 @@
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
-    // Allow only today and tomorrow
-    dateInput.min = formatDate(today);
-    dateInput.max = formatDate(tomorrow);
+    const todayStr = formatDate(today);
+    const tomorrowStr = formatDate(tomorrow);
 
-    // 👉 Token fetch and validation on date change
+    // Set the allowed range in the input
+    dateInput.min = todayStr;
+    dateInput.max = tomorrowStr;
+
+    // Extra check on all devices to block invalid dates
     dateInput.addEventListener('change', function () {
       const selectedDate = this.value;
       const selectedDay = new Date(selectedDate).getDay();
 
+      // Block Tuesday
       if (selectedDay === 2) {
         alert("Appointments are not available on Tuesdays. Please choose another date.");
         this.value = '';
@@ -63,6 +67,15 @@
         return;
       }
 
+      // Extra safety: block if not today or tomorrow
+      if (selectedDate !== todayStr && selectedDate !== tomorrowStr) {
+        alert("You can only select today's or tomorrow's date.");
+        this.value = '';
+        tokenDisplay.textContent = '';
+        return;
+      }
+
+      // Fetch token number from server
       fetch('/get_token_count_koothali', {
         method: 'POST',
         headers: {
@@ -72,15 +85,16 @@
       })
       .then(response => response.json())
       .then(data => {
-if (data.count >= 25) {
-  tokenDisplay.textContent = "Your Token Number will be: " + (data.count + 1);
-} else {
-  tokenDisplay.textContent = "";
-}
+        if (data.count >= 25) {
+          tokenDisplay.textContent = "Your Token Number will be: " + (data.count + 1);
+        } else {
+          tokenDisplay.textContent = "";
+        }
       });
     });
   });
 </script>
+
 
 
 
