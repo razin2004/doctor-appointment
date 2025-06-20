@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from datetime import datetime
 from datetime import datetime,time
 
 app = Flask(__name__)
@@ -25,24 +24,24 @@ def koothali():
     if request.method == 'POST':
         name = request.form['name']
         age = request.form['age']
-        date = request.form['date']
+        date_str = request.form['date']  # format: YYYY-MM-DD
 
-        # Check if the selected date is today
-        current_date = datetime.now().strftime("%Y-%m-%d")
+        today = datetime.today().date()
         current_time = datetime.now().time()
+        selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
-        if date == current_date and current_time.hour >= 13:  # 1:00 PM or later
+        # If booking for today and current time is past 1:00 PM
+        if selected_date == today and current_time >= time(13, 0):
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
-        sheet = get_or_create_sheet(koothali_sheet, date)
-        row = [name, age, date]
+        sheet = get_or_create_sheet(koothali_sheet, date_str)
+        row = [name, age, date_str]
         sheet.append_row(row)
 
         token = len(sheet.get_all_values())
-        return render_template('confirmation.html', name=name, date=date, token=token, place="Koothali")
+        return render_template('confirmation.html', name=name, date=date_str, token=token, place="Koothali")
 
     return render_template('koothali.html')
-
 
 @app.route('/koorachundu', methods=['GET', 'POST'])
 def koorachundu():
