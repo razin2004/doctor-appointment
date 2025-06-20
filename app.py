@@ -22,8 +22,11 @@ def index():
 @app.route('/koothali', methods=['GET', 'POST'])
 def koothali():
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
+        name = ' '.join(request.form['name'].split()).title()
+
+
+        age = int(request.form['age'])  # ← this removes leading zeros
+
         date = request.form['date']
 
        
@@ -37,20 +40,58 @@ def koothali():
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koothali_sheet, date)
-        row = [name, age, date]
-        sheet.append_row(row)
+        current_count = len(sheet.get_all_values())  # Includes header
+        token = current_count  # Because token = row number excluding header
 
-        token = len(sheet.get_all_values())
+        row = [token, name, age, date]
+        sheet.append_row(row)
+        sheet.format("C2:C", {
+        "horizontalAlignment": "CENTER"
+        })
+
         return render_template('confirmation.html', name=name, date=date, token=token, place="Koothali")
 
     return render_template('koothali.html')
+def get_or_create_sheet(spreadsheet, date):
+    try:
+        return spreadsheet.worksheet(date)
+    except gspread.exceptions.WorksheetNotFound:
+        sheet = spreadsheet.add_worksheet(title=date, rows="100", cols="4")
+        sheet.append_row(["Token Number", "Name", "Age", "Date"]) # ✅ Add column headers
+          # ✅ Make first row bold and underlined
+        sheet.format("A1:D1", {
+        "textFormat": {
+        "bold": True,
+        "underline": True
+        },
+        "horizontalAlignment": "CENTER"
+        })
+        # ✅ Token numbers: bold and center-aligned
+        sheet.format("A2:A", {
+            "textFormat": {
+                "bold": True
+            },
+            "horizontalAlignment": "CENTER"
+        })
+        # ✅ Age column (C) and Date column (D): left align
+        sheet.format("C2:C", {
+            "horizontalAlignment": "CENTER"
+        })
+        sheet.format("D2:D", {
+            "horizontalAlignment": "LEFT"
+        })
 
+
+        return sheet
 
 @app.route('/koorachundu', methods=['GET', 'POST'])
 def koorachundu():
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
+        name = ' '.join(request.form['name'].split()).title()
+
+
+        age = int(request.form['age'])  # ← this removes leading zeros
+
         date = request.form['date']
 
         
@@ -60,14 +101,18 @@ def koorachundu():
         current_date = now.strftime("%Y-%m-%d")
         current_time = now.time()
 
-        if date == current_date and current_time.hour >= 20 :  # 7:00 PM or later
+        if date == current_date and current_time.hour >= 19 :  # 7:00 PM or later
             return render_template('koorachundu.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koorachundu_sheet, date)
-        row = [name, age, date]
-        sheet.append_row(row)
+        current_count = len(sheet.get_all_values())  # Includes header
+        token = current_count  # Because token = row number excluding header
 
-        token = len(sheet.get_all_values())
+        row = [token, name, age, date]
+        sheet.append_row(row)
+        sheet.format("C2:C", {
+        "horizontalAlignment": "CENTER"
+        })
         return render_template('confirmation.html', name=name, date=date, token=token, place="koorachundu")
 
     return render_template('koorachundu.html')
@@ -76,7 +121,32 @@ def get_or_create_sheet(spreadsheet, date):
     try:
         return spreadsheet.worksheet(date)
     except gspread.exceptions.WorksheetNotFound:
-        return spreadsheet.add_worksheet(title=date, rows="100", cols="3")
+        sheet = spreadsheet.add_worksheet(title=date, rows="100", cols="3")
+        sheet.append_row(["Token Number", "Name", "Age", "Date"])  # ✅ Add column headers
+             # ✅ Make first row bold and underlined
+        sheet.format("A1:D1", {
+    "textFormat": {
+        "bold": True,
+        "underline": True
+    },
+    "horizontalAlignment": "CENTER"
+})
+        # ✅ Token numbers: bold and left-aligned
+        sheet.format("A2:A", {
+            "textFormat": {
+                "bold": True
+            },
+            "horizontalAlignment": "CENTER"
+        })
+        # ✅ Age column (C) and Date column (D): left align
+        sheet.format("C2:C", {
+            "horizontalAlignment": "CENTER"
+        })
+        sheet.format("D2:D", {
+            "horizontalAlignment": "LEFT"
+        })
+        return sheet
+
 
 @app.route('/get_token_count_koothali', methods=['POST'])
 def get_token_count_koothali():
@@ -87,7 +157,7 @@ def get_token_count_koothali():
 
     try:
         sheet = get_or_create_sheet(koothali_sheet, date)
-        count = len(sheet.get_all_values())
+        count = len(sheet.get_all_values())-1
         return jsonify({'count': count})
     except Exception as e:
         return jsonify({'count': 0})
@@ -101,7 +171,7 @@ def get_token_count_koorachundu():
 
     try:
         sheet = get_or_create_sheet(koorachundu_sheet, date)
-        count = len(sheet.get_all_values())
+        count = len(sheet.get_all_values())-1
         return jsonify({'count': count})
     except Exception as e:
         return jsonify({'count': 0})
