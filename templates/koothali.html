@@ -12,10 +12,10 @@
     <h2>Book Your Appointment - koothali</h2>
     <form method="POST" class="appointment-form">
       <label>Name:</label>
-<input type="text" name="name" id="name" required onkeypress="return /^[a-zA-Z\s]$/.test(String.fromCharCode(event.which))">
+<input type="text" name="name" id="name" required placeholder="ENTER YOUR FULL NAME">
 
       <label>Age:</label>
-<input type="number" name="age" min="0" max="110" maxlength="3" required>
+<input type="number" name="age" min="0" max="110" maxlength="3" required placeholder="ENTER YOUR AGE">
 
       <label>Date:</label>
       <input type="date" name="date" required>
@@ -31,6 +31,10 @@
   </div>
     
  <script>
+    // Name field validation - allow only letters and spaces
+  document.getElementById("name").addEventListener("input", function () {
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+  });
   document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.querySelector('input[name="date"]');
     const tokenDisplay = document.getElementById("tokenDisplay");
