@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime,time
-
+import pytz
 app = Flask(__name__)
 
 # Setup Google Sheets
@@ -26,9 +26,12 @@ def koothali():
         age = request.form['age']
         date = request.form['date']
 
-        # Check if the selected date is today
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        current_time = datetime.now().time()
+       
+        # Get current time in IST
+        ist = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(ist)
+        current_date = now.strftime("%Y-%m-%d")
+        current_time = now.time()
 
         if date == current_date and current_time>= time(13, 0):  # 1:00 PM or later
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
@@ -50,9 +53,12 @@ def koorachundu():
         age = request.form['age']
         date = request.form['date']
 
-        # Check if the selected date is today
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        current_time = datetime.now().time()
+        
+        # Get current time in IST
+        ist = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(ist)
+        current_date = now.strftime("%Y-%m-%d")
+        current_time = now.time()
 
         if date == current_date and current_time.hour >= 20 :  # 7:00 PM or later
             return render_template('koorachundu.html', message="Today's booking is closed as the clinic timing is over.")
