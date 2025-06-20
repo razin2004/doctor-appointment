@@ -3,6 +3,23 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime,time
 import pytz
+import time as systime
+
+def safe_append(sheet, row, max_retries=5):
+    for attempt in range(max_retries):
+        try:
+            values = sheet.get_all_values()
+            token = len(values)
+            row[0] = token
+            sheet.append_row(row)
+            return token
+        except Exception as e:
+            if attempt < max_retries - 1:
+                systime.sleep(0.5)
+            else:
+                raise e
+
+
 app = Flask(__name__)
 
 # Setup Google Sheets
@@ -40,11 +57,9 @@ def koothali():
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koothali_sheet, date)
-        current_count = len(sheet.get_all_values())  # Includes header
-        token = current_count  # Because token = row number excluding header
+        row = [0, name, age, date]  # Token placeholder
+        token = safe_append(sheet, row)
 
-        row = [token, name, age, date]
-        sheet.append_row(row)
         sheet.format("C2:C", {
         "horizontalAlignment": "CENTER"
         })
@@ -105,11 +120,9 @@ def koorachundu():
             return render_template('koorachundu.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koorachundu_sheet, date)
-        current_count = len(sheet.get_all_values())  # Includes header
-        token = current_count  # Because token = row number excluding header
+        row = [0, name, age, date]  # Token placeholder
+        token = safe_append(sheet, row)
 
-        row = [token, name, age, date]
-        sheet.append_row(row)
         sheet.format("C2:C", {
         "horizontalAlignment": "CENTER"
         })
