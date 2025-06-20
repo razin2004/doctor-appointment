@@ -24,16 +24,21 @@ def koothali():
     if request.method == 'POST':
         name = request.form['name']
         age = request.form['age']
-        date_str = request.form['date']  # format: YYYY-MM-DD
+        date_str = request.form['date']  # from form input: YYYY-MM-DD
+
+        try:
+            selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return render_template('koothali.html', message="Invalid date format.")
 
         today = datetime.today().date()
-        current_time = datetime.now().time()
-        selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        now_time = datetime.now().time()
 
-        # If booking for today and current time is past 1:00 PM
-        if selected_date == today and current_time >= time(13, 0):
+        # ✅ Block if selected date is today and current time is after 1:00 PM
+        if selected_date == today and now_time >= time(13, 0):
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
+        # ✅ Allow booking
         sheet = get_or_create_sheet(koothali_sheet, date_str)
         row = [name, age, date_str]
         sheet.append_row(row)
