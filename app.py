@@ -4,6 +4,42 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime,time
 import pytz
 import time as systime
+import pdfkit
+import os
+import qrcode
+
+
+def generate_qr(location_url, filename):
+    img = qrcode.make(location_url)
+    filepath = os.path.join("static", filename)
+    img.save(filepath)
+    return filepath
+
+PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+def get_clinic_time(place, date_str):
+    day = datetime.strptime(date_str, "%Y-%m-%d").strftime('%A')  # e.g., 'Monday'
+    if place.lower() == "koothali":
+        timings = {
+            "Sunday": "08:00 AM – 09:30 AM",
+            "Monday": "09:45 AM – 01:00 PM",
+            "Tuesday": "❌ No Consultation",
+            "Wednesday": "09:45 AM – 01:00 PM",
+            "Thursday": "09:45 AM – 01:00 PM",
+            "Friday": "09:45 AM – 01:00 PM",
+            "Saturday": "09:45 AM – 01:00 PM"
+        }
+    else:
+        timings = {
+            "Sunday": "11:00 AM – 01:00 PM",
+            "Monday": "04:45 PM – 07:00 PM",
+            "Tuesday": "❌ No Consultation",
+            "Wednesday": "04:45 PM – 07:00 PM",
+            "Thursday": "04:45 PM – 07:00 PM",
+            "Friday": "04:45 PM – 07:00 PM",
+            "Saturday": "04:45 PM – 07:00 PM"
+        }
+    return timings.get(day, "Unavailable")
+
 
 def safe_append(sheet, row, max_retries=5):
     for attempt in range(max_retries):
@@ -30,6 +66,51 @@ client = gspread.authorize(creds)
 # Open sheets by name
 koothali_sheet = client.open("Koothali_Appointments")
 koorachundu_sheet = client.open("Koorachundu_Appointments")
+
+@app.route('/download_pdf')
+def download_pdf():
+    name = request.args.get('name')
+    date = request.args.get('date')
+    place = request.args.get('place')
+    token = request.args.get('token')
+
+    time_str = get_clinic_time(place, date)
+
+    if place.lower() == "koothali":
+        map_url = "https://www.google.com/maps/place/7J3QHQP8%2BX7R/@11.5874875,75.7630657,17z/..."
+        qr_file = "koothali_qr.png"
+    else:
+        map_url = "https://www.google.com/maps/place/7J3QGRQW%2B96J/@11.5384625,75.8429407,17z/..."
+        qr_file = "koorachundu_qr.png"
+
+    # Generate QR
+    qr_path = os.path.abspath(generate_qr(map_url, qr_file))
+    qr_file_url = f"file:///{qr_path.replace(os.sep, '/')}"
+
+    rendered = render_template(
+        "pdf_template.html",
+        name=name,
+        date=date,
+        place=place,
+        token=token,
+        time=time_str,
+        qr_image=qr_file_url
+    )
+
+    # ✅ Allow wkhtmltopdf to access local files
+    options = {
+        'enable-local-file-access': None
+    }
+
+    pdf = pdfkit.from_string(rendered, False, configuration=PDF_CONFIG, options=options)
+
+    from flask import make_response
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=appointment_{token}.pdf'
+    return response
+
+
 
 
 @app.route('/')
