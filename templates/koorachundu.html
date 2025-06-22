@@ -11,6 +11,8 @@
   <div class="container">
     <h2>Book Your Appointment - koorachundu</h2>
 <form method="POST" class="appointment-form" id="appointmentForm">
+  <input type="text" name="botcheck" style="display:none;">
+
       <label>Name:</label>
 <input type="text" name="name" id="name" required placeholder="ENTER YOUR FULL NAME">
 
@@ -29,7 +31,7 @@
   
 {% endif %}
 
-      <button type="submit">Confirm Appointment</button>
+<button type="submit" id="submitBtn">Confirm Appointment</button>
     </form>
   </div>
     
@@ -68,7 +70,8 @@
   // Conditions:
   if (
     parts.length !== 2 ||            // Only one @ allowed
-    !localPart ||                    // Nothing before @
+    !/^[a-z0-9.]+$/i.test(localPart)
+ ||                    // Nothing before @
     !allowedDomains.includes(domain) // Domain not in allowed list
   ) {
     warning.textContent = "Invalid email address.";
@@ -156,11 +159,22 @@
       event.preventDefault();
     } else {
       warning.textContent = "";
+
+      // ✅ Disable the button to prevent double submission
+      const button = document.getElementById("submitBtn");
+      button.disabled = true;
+      button.innerText = "Booking...";
     }
   } else {
     warning.textContent = "";
+
+    // ✅ Disable the button for empty (valid) email
+    const button = document.getElementById("submitBtn");
+    button.disabled = true;
+    button.innerText = "Booking...";
   }
 });
+
 
 </script>
 

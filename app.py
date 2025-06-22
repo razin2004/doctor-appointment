@@ -39,13 +39,17 @@ def index():
 @app.route('/koothali', methods=['GET', 'POST'])
 def koothali():
     if request.method == 'POST':
+        botcheck = request.form.get('botcheck')
+        if botcheck:
+            return render_template('koothali.html', message="Spam detected. Booking not allowed.")
+
         name = ' '.join(request.form['name'].split()).title()
 
 
         age = int(request.form['age'])  # ← this removes leading zeros
 
         date = request.form['date']
-        email = request.form['email']
+        email = request.form['email'].replace(" ", "").lower()
 
 
        
@@ -106,13 +110,18 @@ def get_or_create_sheet(spreadsheet, date):
 @app.route('/koorachundu', methods=['GET', 'POST'])
 def koorachundu():
     if request.method == 'POST':
+        botcheck = request.form.get('botcheck')
+        if botcheck:
+            return render_template('koothali.html', message="Spam detected. Booking not allowed.")
+
         name = ' '.join(request.form['name'].split()).title()
 
 
         age = int(request.form['age'])  # ← this removes leading zeros
 
         date = request.form['date']
-        email = request.form['email']
+        email = request.form['email'].replace(" ", "").lower()
+
 
 
         
