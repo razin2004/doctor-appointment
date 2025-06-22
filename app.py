@@ -4,18 +4,21 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime,time
 import pytz
 import time as systime
-import pdfkit
+from xhtml2pdf import pisa
+from io import BytesIO
+from flask import make_response
 import os
 import qrcode
 
-
 def generate_qr(location_url, filename):
     img = qrcode.make(location_url)
-    filepath = os.path.join("static", filename)
-    img.save(filepath)
-    return filepath
+    filepath = os.path.join("static", filename.replace(".png", ".jpg"))
+    img = img.convert("RGB")
+    img.save(filepath, "JPEG")
+    return filepath  # ← this is already like 'static/koothali_qr.jpg'
+    
 
-PDF_CONFIG = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+
 def get_clinic_time(place, date_str):
     day = datetime.strptime(date_str, "%Y-%m-%d").strftime('%A')  # e.g., 'Monday'
     if place.lower() == "koothali":
@@ -78,14 +81,12 @@ def download_pdf():
 
     if place.lower() == "koothali":
         map_url = "https://www.google.com/maps/place/7J3QHQP8%2BX7R/@11.5874875,75.7630657,17z/..."
-        qr_file = "koothali_qr.png"
+        qr_file = "koothali_qr.jpg"
     else:
         map_url = "https://www.google.com/maps/place/7J3QGRQW%2B96J/@11.5384625,75.8429407,17z/..."
-        qr_file = "koorachundu_qr.png"
+        qr_file = "koorachundu_qr.jpg"
 
-    # Generate QR
-    qr_path = os.path.abspath(generate_qr(map_url, qr_file))
-    qr_file_url = f"file:///{qr_path.replace(os.sep, '/')}"
+    qr_path = generate_qr(map_url, qr_file)
 
     rendered = render_template(
         "pdf_template.html",
@@ -94,21 +95,20 @@ def download_pdf():
         place=place,
         token=token,
         time=time_str,
-        qr_image=qr_file_url
+        qr_image=qr_path
     )
 
-    # ✅ Allow wkhtmltopdf to access local files
-    options = {
-        'enable-local-file-access': None
-    }
+    pdf = BytesIO()
+    pisa_status = pisa.CreatePDF(BytesIO(rendered.encode("utf-8")), dest=pdf)
 
-    pdf = pdfkit.from_string(rendered, False, configuration=PDF_CONFIG, options=options)
+    if pisa_status.err:
+        return "Error generating PDF", 500
 
-    from flask import make_response
-    response = make_response(pdf)
+    response = make_response(pdf.getvalue())
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=appointment_{token}.pdf'
     return response
+
 
 
 
