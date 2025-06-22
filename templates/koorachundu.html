@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon1.ico') }}" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dr.Sooppy's Booking</title>
@@ -9,18 +9,21 @@
 </head>
 <body>
   <div class="container">
-    <h2>Book Your Appointment - Koorachundu</h2>
-    <form method="POST" class="appointment-form">
-     
-     <label>Name:</label>
-<input type="text" name="name" id="name" required required placeholder="ENTER YOUR FULL NAME">
+    <h2>Book Your Appointment - koorachundu</h2>
+<form method="POST" class="appointment-form" id="appointmentForm">
+      <label>Name:</label>
+<input type="text" name="name" id="name" required placeholder="ENTER YOUR FULL NAME">
 
       <label>Age:</label>
-      <input type="number" name="age" min="0" max="110" required placeholder="ENTER YOUR AGE">
+<input type="number" name="age" min="0" max="110" maxlength="3" required placeholder="ENTER YOUR AGE">
+<label>Email <span style="font-weight: normal; font-size: 0.9em; color: gray;">(Optional)</span>:</label>
+<input type="email" name="email" id="email" placeholder="ENTER YOUR EMAIL">
+<span id="emailWarning" style="color: red;"></span>
 
       <label>Date:</label>
       <input type="date" name="date" required>
 <p id="tokenDisplay"></p>
+
 {% if message %}
   <p style="color: red;">{{ message }}</p>
   
@@ -29,7 +32,7 @@
       <button type="submit">Confirm Appointment</button>
     </form>
   </div>
-
+    
  <script>
     // Name field validation - allow only letters and spaces
   document.getElementById("name").addEventListener("input", function () {
@@ -38,6 +41,42 @@
   document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.querySelector('input[name="date"]');
     const tokenDisplay = document.getElementById("tokenDisplay");
+
+    document.getElementById("email").addEventListener("input", function () {
+  const emailInput = this;
+  const warning = document.getElementById("emailWarning");
+  const value = emailInput.value.trim().toLowerCase();
+
+  const allowedDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+
+  // If empty, clear warning
+  if (value === "") {
+    warning.textContent = "";
+    return;
+  }
+
+  // Check if contains '@'
+  if (!value.includes("@")) {
+    warning.textContent = "Invalid email address.";
+    return;
+  }
+
+  const parts = value.split("@");
+  const localPart = parts[0];
+  const domain = parts[1];
+
+  // Conditions:
+  if (
+    parts.length !== 2 ||            // Only one @ allowed
+    !localPart ||                    // Nothing before @
+    !allowedDomains.includes(domain) // Domain not in allowed list
+  ) {
+    warning.textContent = "Invalid email address.";
+  } else {
+    warning.textContent = "";
+  }
+});
+
 
     // Function to format date as yyyy-mm-dd
     function formatDate(date) {
@@ -97,6 +136,32 @@
       });
     });
   });
+  document.getElementById("appointmentForm").addEventListener("submit", function (event) {
+  const emailInput = document.getElementById("email").value.trim().toLowerCase();
+  const warning = document.getElementById("emailWarning");
+  const allowedDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+
+  if (emailInput !== "") {
+    const parts = emailInput.split("@");
+    const localPart = parts[0];
+    const domain = parts[1];
+
+    const isValid =
+      parts.length === 2 &&
+      localPart.length > 0 &&
+      allowedDomains.includes(domain);
+
+    if (!isValid) {
+      warning.textContent = "Please enter a valid email address or leave it blank.";
+      event.preventDefault();
+    } else {
+      warning.textContent = "";
+    }
+  } else {
+    warning.textContent = "";
+  }
+});
+
 </script>
 
 </body>

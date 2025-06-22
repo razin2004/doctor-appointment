@@ -45,6 +45,8 @@ def koothali():
         age = int(request.form['age'])  # ← this removes leading zeros
 
         date = request.form['date']
+        email = request.form['email']
+
 
        
         # Get current time in IST
@@ -57,7 +59,8 @@ def koothali():
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koothali_sheet, date)
-        row = [0, name, age, date]  # Token placeholder
+        row = [0, name, age, date, email]
+
         token = safe_append(sheet, row)
 
         sheet.format("C2:C", {
@@ -72,9 +75,10 @@ def get_or_create_sheet(spreadsheet, date):
         return spreadsheet.worksheet(date)
     except gspread.exceptions.WorksheetNotFound:
         sheet = spreadsheet.add_worksheet(title=date, rows="100", cols="4")
-        sheet.append_row(["Token Number", "Name", "Age", "Date"]) # ✅ Add column headers
+        sheet.append_row(["Token Number", "Name", "Age", "Date", "Email"])
+
           # ✅ Make first row bold and underlined
-        sheet.format("A1:D1", {
+        sheet.format("A1:E1", {
         "textFormat": {
         "bold": True,
         "underline": True
@@ -108,6 +112,8 @@ def koorachundu():
         age = int(request.form['age'])  # ← this removes leading zeros
 
         date = request.form['date']
+        email = request.form['email']
+
 
         
         # Get current time in IST
@@ -120,7 +126,8 @@ def koorachundu():
             return render_template('koorachundu.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koorachundu_sheet, date)
-        row = [0, name, age, date]  # Token placeholder
+        row = [0, name, age, date, email]
+
         token = safe_append(sheet, row)
 
         sheet.format("C2:C", {
@@ -135,9 +142,10 @@ def get_or_create_sheet(spreadsheet, date):
         return spreadsheet.worksheet(date)
     except gspread.exceptions.WorksheetNotFound:
         sheet = spreadsheet.add_worksheet(title=date, rows="100", cols="3")
-        sheet.append_row(["Token Number", "Name", "Age", "Date"])  # ✅ Add column headers
+        sheet.append_row(["Token Number", "Name", "Age", "Date", "Email"])
+
              # ✅ Make first row bold and underlined
-        sheet.format("A1:D1", {
+        sheet.format("A1:E1", {
     "textFormat": {
         "bold": True,
         "underline": True

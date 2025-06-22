@@ -250,4 +250,14 @@ table th[colspan="2"] {
   font-size: 1.1em;
   padding: 12px;
 }
+input[type="email"] {
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
 
