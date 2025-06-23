@@ -24,6 +24,8 @@
 
       <label>Date:</label>
       <input type="date" name="date" required>
+      <span id="dateWarning" style="color: red;"></span>
+
 <p id="tokenDisplay"></p>
 
 {% if message %}
@@ -102,12 +104,14 @@
 
     // Extra check on all devices to block invalid dates
     dateInput.addEventListener('change', function () {
+      document.getElementById("dateWarning").textContent = "";
       const selectedDate = this.value;
       const selectedDay = new Date(selectedDate).getDay();
 
       // Block Tuesday
       if (selectedDay === 2) {
-        alert("Appointments are not available on Tuesdays. Please choose another date.");
+        document.getElementById("dateWarning").textContent = "Appointments are not available on Tuesdays. Please choose another date.";
+
         this.value = '';
         tokenDisplay.textContent = '';
         return;
