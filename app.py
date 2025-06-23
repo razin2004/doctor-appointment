@@ -140,7 +140,7 @@ def koothali():
         current_date = now.strftime("%Y-%m-%d")
         current_time = now.time()
 
-        if date == current_date and current_time>= time(23, 0):  # 1:00 PM or later
+        if date == current_date and current_time>= time(13, 0):  # 1:00 PM or later
             return render_template('koothali.html', message="Today's booking is closed as the clinic timing is over.")
 
         sheet = get_or_create_sheet(koothali_sheet, date)
