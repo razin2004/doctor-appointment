@@ -86,11 +86,13 @@
       width: 100%;
       max-width: 550px;
       padding: 50px;
+      overflow: hidden; /* prevents overflow */
       border-radius: 35px;
       color: var(--navy-deep);
       box-shadow: 0 40px 100px rgba(0,0,0,0.5);
       border: 1px solid var(--glass-border);
     }
+    
 
     h2 {
       font-family: 'Playfair Display', serif;
@@ -185,9 +187,18 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
 
+  .container {
+    padding: 25px 15px;
+    border-radius: 20px;
+  }
+}
     @media (max-width: 600px) {
-      .container { padding: 30px 20px; }
+      
       .back-nav { top: 20px; left: 20px; }
     }
     /* --- PROFESSIONAL ALERTS --- */
@@ -257,6 +268,13 @@
   background: #eff6ff;
   color: #1e40af;
   border-color: #bfdbfe;
+}
+input {
+  width: 100%;
+  max-width: 100%;
+}
+input[type="date"] {
+  min-width: 0; /* prevents Safari overflow */
 }
   </style>
 </head>
