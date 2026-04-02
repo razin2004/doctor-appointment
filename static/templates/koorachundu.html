@@ -192,17 +192,25 @@
     }
     /* --- PROFESSIONAL ALERTS --- */
 .status-msg {
-  display: none; /* Hidden by default */
+  display: none; /* Keeps it hidden initially */
+  opacity: 0;
   padding: 14px 18px;
   border-radius: 14px;
   font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 0; /* No space when hidden */
   line-height: 1.4;
   border: 1px solid transparent;
   align-items: center;
   gap: 10px;
-  animation: fadeIn 0.3s ease;
+  transition: opacity 0.3s ease, margin-bottom 0.3s ease;
+}
+
+/* When active, add spacing */
+.status-msg.active {
+  display: flex;
+  opacity: 1;
+  margin-bottom: 20px;
 }
 
 @keyframes fadeIn {
@@ -244,20 +252,6 @@
   color: #991b1b;
   border-color: #fecaca;
 }
-
-.toast-success {
-  display: flex;
-  background: #ecfdf5;
-  color: #065f46;
-  border-color: #bbf7d0;
-}
-
-.toast-info {
-  display: flex;
-  background: #eff6ff;
-  color: #1e40af;
-  border-color: #bfdbfe;
-}
   </style>
 </head>
 <body>
@@ -268,14 +262,16 @@
 
   <div class="container">
     <h2>Book Appointment</h2>
-    <span class="location-tag"><i class="fa-solid fa-location-dot"></i> Koothali Clinic</span>
+    <span class="location-tag"><i class="fa-solid fa-location-dot"></i> koorachundu Clinic</span>
 
     <form method="POST" class="appointment-form" id="appointmentForm">
       <input type="text" name="botcheck" style="display:none;">
+
 <div id="toastMsg" class="toast-msg">
   <i id="toastIcon" class="fa-solid"></i>
   <span id="toastText"></span>
 </div>
+
       <div>
         <label>Full Name</label>
         <input type="text" name="name" id="name" required placeholder="Enter Patient Name">
@@ -289,16 +285,15 @@
       <div>
         <label>Phone Number <span style="font-weight: normal; font-size: 0.85em; color: #94a3b8;">(Optional)</span></label>
         <input type="tel" name="email" id="email" placeholder="123-456-7890">
-        <span id="emailWarning" style="color: #ef4444;"></span>
       </div>
 
       <div>
         <label>Preferred Date</label>
         <input type="date" name="date" required>
+        <span id="dateWarning" style="color: #ef4444;"></span>
       </div>
-
+      
       <p id="tokenDisplay"></p>
-
       <button type="submit" id="submitBtn">Confirm Appointment</button>
     </form>
   </div>
@@ -380,7 +375,7 @@
           return;
         }
 
-        fetch('/get_token_count_koothali', {
+        fetch('/get_token_count_koorachundu', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ date: selectedDate })
@@ -424,7 +419,7 @@
         button.innerText = "Booking...";
       }
     });
-    function showToast(message, type="error") {
+ function showToast(message, type="error") {
   const toast = document.getElementById("toastMsg");
   const text = document.getElementById("toastText");
   const icon = document.getElementById("toastIcon");
@@ -449,7 +444,7 @@
   }, 6000);
 }
   </script>
-<script>
+  <script>
   {% if message %}
     showToast(`{{ message | safe }}`, "error");
   {% endif %}
