@@ -176,7 +176,7 @@ nav {
 <div class="modal-overlay" id="drModal">
   <div class="modal-content">
     <i class="fa-solid fa-xmark close-modal" onclick="closeModal()"></i>
-    <img src="static/images/soopy.jpeg" alt="Dr. Sooppy" class="modal-dr-img">
+    <img src="{{ url_for('static', filename='images/soopy.jpeg') }}" alt="Dr. Sooppy" class="modal-dr-img">
     <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem;">Dr. Sooppy</h2>
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 15px;">General Physician</p>
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
@@ -185,9 +185,93 @@ nav {
       <p><i class="fa-solid fa-award" style="width: 25px; color: var(--primary);"></i> <strong>Experience:</strong> 30+ Years in Clinical Practice</p>
       <p><i class="fa-solid fa-language" style="width: 25px; color: var(--primary);"></i> <strong>Languages:</strong> English, Malayalam</p>
     </div>
+    {% if session.get('doctor') %}
+    <a href="/doctor-login" style="
+      margin-top:20px;
+      padding:15px 20px;
+      border:none;
+      border-radius:12px;
+      background:#020617;
+      color:white;
+      font-weight:700;
+      width: 100%;
+      cursor:pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+      text-decoration: none;
+    " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#020617'">
+      <i class="fa-solid fa-user-doctor"></i> Admin Dashboard
+    </a>
+    {% else %}
+    <button onclick="openLoginModal(); closeModal();" style="
+      margin-top:20px;
+      padding:15px 20px;
+      border:none;
+      border-radius:12px;
+      background:#020617;
+      color:white;
+      font-weight:700;
+      width: 100%;
+      cursor:pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+    " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#020617'">
+      <i class="fa-solid fa-user-doctor"></i> Admin Login
+    </button>
+    {% endif %}
+  </div>
+  </div>
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-content" style="padding: 50px;">
+    <i class="fa-solid fa-xmark close-modal" onclick="closeLoginModal()"></i>
+
+    <div style="background: var(--navy-deep); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+      <i class="fa-solid fa-lock" style="color: white; font-size: 2rem;"></i>
+    </div>
+    
+    <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem;">Admin Access</h2>
+    <p style="color: #64748b; font-weight: 500; margin-bottom: 25px;">Please enter your credentials</p>
+
+    <form method="POST" action="/doctor-login" style="text-align: left;">
+      <label style="font-weight: 700; font-size: 0.85rem; color: #475569; margin-left: 5px; display: block; margin-bottom: 5px;">Username</label>
+      <input type="text" name="username" placeholder="Enter username" required
+        style="width:100%; margin-bottom:15px; padding:16px 20px; border-radius:15px; border: 2px solid #e2e8f0; background: #f8fafc; font-family: inherit; font-size: 1rem; font-weight: 500; outline: none; transition: 0.3s; color: var(--navy-deep);"
+        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-glow)'"
+        onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+
+      <label style="font-weight: 700; font-size: 0.85rem; color: #475569; margin-left: 5px; display: block; margin-bottom: 5px;">Password</label>
+      <input type="password" name="password" placeholder="Enter password" required
+        style="width:100%; margin-bottom:25px; padding:16px 20px; border-radius:15px; border: 2px solid #e2e8f0; background: #f8fafc; font-family: inherit; font-size: 1rem; font-weight: 500; outline: none; transition: 0.3s; color: var(--navy-deep);"
+        onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-glow)'"
+        onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+
+      <button type="submit" style="
+        width:100%;
+        padding:18px;
+        border:none;
+        border-radius:15px;
+        background:var(--navy-deep);
+        color:white;
+        font-weight:700;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      " onmouseover="this.style.background='var(--primary)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='var(--navy-deep)'; this.style.transform='translateY(0)';">
+        Secure Login <i class="fa-solid fa-arrow-right-to-bracket"></i>
+      </button>
+    </form>
   </div>
 </div>
-
 <nav>
   <a href="#" class="logo" >Dr.<span>Sooppy's Clinic</span></a>
   <div class="dr-profile-trigger" onclick="openModal()">
@@ -211,15 +295,38 @@ nav {
       <i class="fa-solid fa-location-dot"></i> Get Direction
     </a>
     <table class="detailed-schedule">
-      <tr><td class="day-name">Sunday</td><td class="day-time">08:00 AM – 09:30 AM</td></tr>
-      <tr><td class="day-name">Monday</td><td class="day-time">09:45 AM – 01:00 PM</td></tr>
-      <tr><td class="day-name">Tuesday</td><td class="day-time"><span class="closed-badge">No Consultation</span></td></tr>
-      <tr><td class="day-name">Wednesday</td><td class="day-time">09:45 AM – 01:00 PM</td></tr>
-      <tr><td class="day-name">Thursday</td><td class="day-time">09:45 AM – 01:00 PM</td></tr>
-      <tr><td class="day-name">Friday</td><td class="day-time">09:45 AM – 01:00 PM</td></tr>
-      <tr><td class="day-name">Saturday</td><td class="day-time">09:45 AM – 01:00 PM</td></tr>
+      {% if koothali_leaves %}
+        {% if today_str in koothali_leaves %}
+          <tr><td colspan="2" style="padding: 0; padding-bottom: 15px; border: none;">
+            <div style="display:flex; padding: 12px; border-radius:12px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-weight: bold; align-items: center; gap: 10px; font-size: 0.9rem;">
+              <i class="fa-solid fa-calendar-xmark"></i> On Leave Today
+            </div>
+          </td></tr>
+        {% endif %}
+        {% if tomorrow_str in koothali_leaves %}
+          <tr><td colspan="2" style="padding: 0; padding-bottom: 15px; border: none;">
+            <div style="display:flex; padding: 12px; border-radius:12px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-weight: bold; align-items: center; gap: 10px; font-size: 0.9rem;">
+              <i class="fa-solid fa-calendar-xmark"></i> On Leave Tomorrow
+            </div>
+          </td></tr>
+        {% endif %}
+      {% endif %}
+      {% for row in koothali_schedule %}
+      <tr>
+        <td class="day-name">{{ row.Day }}</td>
+        <td class="day-time">
+          {% if row.Status == "Closed" %}
+            <span class="closed-badge">No Consultation</span>
+          {% else %}
+            {{ row.Start }} – {{ row.End }}
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td class="day-name">Schedule unavailable</td><td class="day-time">Please refresh or check back later.</td></tr>
+      {% endfor %}
     </table>
-    <a href="/koothali" class="btn-book">Confirm Appointment <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="/koothali" class="btn-book">Book Appointment <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div class="clinic-card">
@@ -231,15 +338,38 @@ nav {
       <i class="fa-solid fa-location-dot"></i> Get Direction
     </a>
     <table class="detailed-schedule">
-      <tr><td class="day-name">Sunday</td><td class="day-time">11:00 AM – 01:00 PM</td></tr>
-      <tr><td class="day-name">Monday</td><td class="day-time">04:45 PM – 07:00 PM</td></tr>
-      <tr><td class="day-name">Tuesday</td><td class="day-time"><span class="closed-badge">No Consultation</span></td></tr>
-      <tr><td class="day-name">Wednesday</td><td class="day-time">04:45 PM – 07:00 PM</td></tr>
-      <tr><td class="day-name">Thursday</td><td class="day-time">04:45 PM – 07:00 PM</td></tr>
-      <tr><td class="day-name">Friday</td><td class="day-time">04:45 PM – 07:00 PM</td></tr>
-      <tr><td class="day-name">Saturday</td><td class="day-time">04:45 PM – 07:00 PM</td></tr>
+      {% if koorachundu_leaves %}
+        {% if today_str in koorachundu_leaves %}
+          <tr><td colspan="2" style="padding: 0; padding-bottom: 15px; border: none;">
+            <div style="display:flex; padding: 12px; border-radius:12px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-weight: bold; align-items: center; gap: 10px; font-size: 0.9rem;">
+              <i class="fa-solid fa-calendar-xmark"></i> On Leave Today
+            </div>
+          </td></tr>
+        {% endif %}
+        {% if tomorrow_str in koorachundu_leaves %}
+          <tr><td colspan="2" style="padding: 0; padding-bottom: 15px; border: none;">
+            <div style="display:flex; padding: 12px; border-radius:12px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-weight: bold; align-items: center; gap: 10px; font-size: 0.9rem;">
+              <i class="fa-solid fa-calendar-xmark"></i> On Leave Tomorrow
+            </div>
+          </td></tr>
+        {% endif %}
+      {% endif %}
+      {% for row in koorachundu_schedule %}
+      <tr>
+        <td class="day-name">{{ row.Day }}</td>
+        <td class="day-time">
+          {% if row.Status == "Closed" %}
+            <span class="closed-badge">No Consultation</span>
+          {% else %}
+            {{ row.Start }} – {{ row.End }}
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td class="day-name">Schedule unavailable</td><td class="day-time">Please refresh or check back later.</td></tr>
+      {% endfor %}
     </table>
-    <a href="/koorachundu" class="btn-book">Confirm Appointment <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="/koorachundu" class="btn-book">Book Appointment <i class="fa-solid fa-arrow-right"></i></a>
   </div>
 </main>
 
@@ -283,8 +413,82 @@ nav {
   // Close modal when clicking outside content
   window.onclick = function(event) {
     let modal = document.getElementById('drModal');
+    let loginModal = document.getElementById('loginModal');
     if (event.target == modal) { closeModal(); }
+    if (event.target == loginModal) { closeLoginModal(); }
   }
+  function openLoginModal(){
+  document.getElementById('loginModal').style.display = 'flex';
+}
+function closeLoginModal(){
+  document.getElementById('loginModal').style.display = 'none';
+  openModal();
+}
+
+  {% if error %}
+  document.addEventListener('DOMContentLoaded', function() {
+    openLoginModal();
+    showToast(`{{ error | safe }}`, "error");
+  });
+  {% endif %}
+</script>
+
+<div id="toastMsg" class="toast-msg">
+  <i id="toastIcon" class="fa-solid"></i>
+  <span id="toastText"></span>
+</div>
+<style>
+.toast-msg {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.toast-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+.toast-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #bbf7d0;
+}
+.toast-info {
+  background: #eff6ff;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+</style>
+<script>
+function showToast(message, type="error") {
+  const toast = document.getElementById("toastMsg");
+  const text = document.getElementById("toastText");
+  const icon = document.getElementById("toastIcon");
+  text.textContent = message;
+  if (type === "error") {
+    icon.className = "fa-solid fa-circle-exclamation";
+    toast.className = "toast-msg toast-error";
+  } else if (type === "success") {
+    icon.className = "fa-solid fa-circle-check";
+    toast.className = "toast-msg toast-success";
+  } else {
+    icon.className = "fa-solid fa-circle-info";
+    toast.className = "toast-msg toast-info";
+  }
+  toast.style.display = "flex";
+  setTimeout(() => { toast.style.display = "none"; }, 6000);
+}
 </script>
 
 </body>

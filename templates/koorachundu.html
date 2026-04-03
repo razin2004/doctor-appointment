@@ -72,12 +72,12 @@
     /* Mobile adjustment to keep it from hitting the screen edge */
     @media (max-width: 600px) {
       .back-nav {
-        top: 15px;
-        left: 15px;
+        top: 10px;
+        left: 10px;
       }
       .btn-back {
-        padding: 8px 14px;
-        font-size: 0.8rem;
+        padding: 8px 12px;
+        font-size: 0.7rem;
       }
     }
     /* --- FORM CONTAINER --- */
@@ -291,7 +291,7 @@ input[type="date"] {
 
   <div class="container">
     <h2>Book Appointment</h2>
-    <span class="location-tag"><i class="fa-solid fa-location-dot"></i> koorachundu Clinic</span>
+    <span class="location-tag"><i class="fa-solid fa-location-dot"></i> Koorachundu Clinic</span>
 
     <form method="POST" class="appointment-form" id="appointmentForm">
       <input type="text" name="botcheck" style="display:none;">
@@ -313,7 +313,8 @@ input[type="date"] {
 
       <div>
         <label>Phone Number <span style="font-weight: normal; font-size: 0.85em; color: #94a3b8;">(Optional)</span></label>
-        <input type="tel" name="email" id="email" placeholder="123-456-7890">
+        <input type="tel" name="phone" id="phone" placeholder="Enter phone number">
+<span id="phoneWarning" style="color:#ef4444;"></span>
       </div>
 
       <div>
@@ -337,36 +338,18 @@ input[type="date"] {
       const dateInput = document.querySelector('input[name="date"]');
       const tokenDisplay = document.getElementById("tokenDisplay");
 
-      document.getElementById("email").addEventListener("input", function () {
-        const emailInput = this;
-        const warning = document.getElementById("emailWarning");
-        const value = emailInput.value.trim().toLowerCase();
-        const allowedDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+document.getElementById("phone").addEventListener("input", function () {
+  const value = this.value.replace(/\D/g, ''); // only numbers
+  this.value = value;
 
-        if (value === "") {
-          warning.textContent = "";
-          return;
-        }
+  const warning = document.getElementById("phoneWarning");
 
-        if (!value.includes("@")) {
-          warning.textContent = "Invalid email address.";
-          return;
-        }
-
-        const parts = value.split("@");
-        const localPart = parts[0];
-        const domain = parts[1];
-
-        if (
-          parts.length !== 2 || 
-          !/^[a-z0-9.]+$/i.test(localPart) || 
-          !allowedDomains.includes(domain)
-        ) {
-          warning.textContent = "Invalid email address.";
-        } else {
-          warning.textContent = "";
-        }
-      });
+  if (value.length > 0 && value.length < 10) {
+    warning.textContent = "Enter a valid 10-digit phone number.";
+  } else {
+    warning.textContent = "";
+  }
+});
 
       function formatDate(date) {
         const year = date.getFullYear();
@@ -421,28 +404,17 @@ input[type="date"] {
     });
 
     document.getElementById("appointmentForm").addEventListener("submit", function (event) {
-      const emailInput = document.getElementById("email").value.trim().toLowerCase();
-      const warning = document.getElementById("emailWarning");
-      const allowedDomains = ["gmail.com", "hotmail.com", "yahoo.com"];
+      const phone = document.getElementById("phone").value;
 
-      if (emailInput !== "") {
-        const parts = emailInput.split("@");
-        const localPart = parts[0];
-        const domain = parts[1];
-
-        const isValid = parts.length === 2 && localPart.length > 0 && allowedDomains.includes(domain);
-
-        if (!isValid) {
-          warning.textContent = "Please enter a valid email address or leave it blank.";
-          event.preventDefault();
-        } else {
-          warning.textContent = "";
-          const button = document.getElementById("submitBtn");
-          button.disabled = true;
-          button.innerText = "Booking...";
-        }
-      } else {
-        warning.textContent = "";
+if (phone && phone.length !== 10) {
+  document.getElementById("phoneWarning").textContent =
+    "Enter a valid 10-digit phone number.";
+  event.preventDefault();
+  return;
+}
+     
+    else {
+        document.getElementById("phoneWarning").textContent = "";
         const button = document.getElementById("submitBtn");
         button.disabled = true;
         button.innerText = "Booking...";
@@ -472,6 +444,25 @@ input[type="date"] {
     toast.style.display = "none";
   }, 6000);
 }
+dateInput.addEventListener('change', function () {
+  const selectedDate = this.value;
+
+  fetch('/check_leave', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: selectedDate, place: "koorachundu" })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.leave) {
+      showToast("Doctor is on leave on this date.", "error");
+      this.value = '';
+      if(document.getElementById("tokenDisplay")) {
+        document.getElementById("tokenDisplay").textContent = "";
+      }
+    }
+  });
+});
   </script>
   <script>
   {% if message %}
