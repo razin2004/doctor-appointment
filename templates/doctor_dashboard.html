@@ -229,6 +229,7 @@ button[type="submit"]:hover {
 }
 .form-group {
   width: 100%;
+  overflow: hidden;   /* ✅ this prevents spill outside */
 }
 
 .form-group input,
@@ -238,10 +239,17 @@ button[type="submit"]:hover {
   box-sizing: border-box;
 }
 
+
 input[type="date"] {
   width: 100%;
   max-width: 100%;
   display: block;
+
+  padding-right: 10px;   /* 🔥 reduce right pressure */
+}
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
 }
 </style>
 </head>
@@ -678,6 +686,7 @@ document.addEventListener("DOMContentLoaded", function () {
   color: #1e40af;
   border-color: #bfdbfe;
 }
+
 </style>
 
 
